@@ -28,5 +28,6 @@ from Cambridge Institute of Sure Success (CISS), Qasimabad.
 Open `index.html` in any browser, or enable GitHub Pages on this repository
 (Settings → Pages → Deploy from branch `main`, folder `/ (root)`).
 
-All photos and PDF documents are embedded in `index.html`, so the site works
-as a single file with no extra assets.
+The site is a multi-file static site: `index.html` plus the `assets/` folder
+(classroom photos, scanned documents and PDF files). Keep the `assets/`
+folder next to `index.html` for all photos, documents and downloads to work.
