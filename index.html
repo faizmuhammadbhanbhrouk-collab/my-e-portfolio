@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:,">
+<title>My e-portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --navy:#14365e; --navy2:#9ec0f2; --ink:#eef1f5; --muted:#aab4c2; --bg:#12161d; --soft:#1a212e; --line:#2c3646; --accent:#c9a227; --card:#171e29; --header:#111;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Open Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;overflow-x:clip}
+h1,h2,h3{font-family:"Lora",Georgia,serif;line-height:1.25;margin:0}
+a{color:#8fb8ef}
+/* Header like Google Sites — transparent over the banner at the very top; a solid dark background fades in after scrolling down a little. The soft dark shade behind the transparent state keeps the white links readable over any part of the banner. */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 14px;flex-wrap:nowrap;transition:background-color .35s ease,box-shadow .35s ease}
+.topbar:not(.scrolled){background-image:linear-gradient(to bottom,rgba(7,13,24,.62),rgba(7,13,24,.30) 62%,rgba(7,13,24,0));text-shadow:0 1px 6px rgba(0,0,0,.55)}
+.topbar.scrolled{background:#111;box-shadow:0 2px 14px rgba(0,0,0,.4)}
+.topbar .brand{font-weight:700;font-size:17px;color:#fff;text-decoration:none;white-space:nowrap;flex:0 0 auto}
+.topbar nav{display:flex;flex-wrap:nowrap;gap:1px;flex:1 1 auto;align-items:center;min-width:0}
+.topbar nav button{background:none;border:0;color:#dbe6f5;font:inherit;font-size:12.8px;padding:7px 8px;cursor:pointer;border-radius:6px;text-align:left;white-space:nowrap}
+@media(max-width:1280px) and (min-width:761px){.topbar nav button{font-size:11.8px;padding:6px 5px}.topbar .brand{font-size:15px}.topbar{gap:6px;padding:8px 10px}}
+/* Search (after More) */
+.search-wrap{position:relative;flex:0 0 auto;display:flex;align-items:center;margin-left:auto}
+.search-btn{background:none;border:0;color:#fff;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0}
+.search-btn:hover{background:rgba(255,255,255,.14)}
+.search-btn svg{width:19px;height:19px;display:block}
+.search-panel{position:absolute;top:calc(100% + 10px);right:0;width:min(330px,88vw);background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 38px rgba(0,0,0,.32);padding:10px;display:none;z-index:90}
+.search-panel.open{display:block}
+.search-panel input{width:100%;font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);outline:none}
+.search-panel input:focus{border-color:var(--accent)}
+.search-results{margin-top:8px;max-height:320px;overflow:auto}
+.search-results:empty{margin-top:0}
+.search-results button{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:9px 10px;cursor:pointer;font:inherit;color:var(--ink)}
+.search-results button:hover,.search-results button.sel{background:var(--soft)}
+.search-results button b{display:block;font-size:14px;font-family:"Lora",Georgia,serif}
+.search-results button span{display:block;font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+.search-none{font-size:13.5px;color:var(--muted);padding:10px 6px 4px}
+.search-hint{font-size:12px;color:var(--muted);padding:6px 6px 2px}
+.flash-hit{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.topbar nav button:hover{background:rgba(255,255,255,.12);color:#fff}
+.topbar nav button.active{background:#fff;color:#111;font-weight:700}
+.more-wrap{position:relative;display:inline-block}
+.more-wrap>button.more-active{background:#fff;color:#111;font-weight:700}
+.more-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.28);min-width:272px;padding:6px;display:none;z-index:80}
+.more-menu.open{display:block}
+.more-menu:before{content:"";position:absolute;top:-8px;left:0;right:0;height:8px}
+@media (hover:hover) and (min-width:761px){
+  .more-wrap:not(.no-hover):hover .more-menu,
+  .more-wrap:not(.no-hover):focus-within .more-menu{display:block}
+}
+.more-menu button{display:block;width:100%;color:var(--ink)!important;background:none!important;padding:11px 12px!important;border-radius:8px;text-align:left;font-size:14px!important}
+.more-menu button:hover{background:var(--soft)!important;color:var(--ink)!important}
+.more-menu button.active{background:var(--navy)!important;color:#fff!important;font-weight:700}
+.burger{display:none;background:none;border:0;color:#fff;font-size:22px;cursor:pointer}
+/* Banner */
+.banner{background:var(--navy);color:#fff;padding:56px 20px 48px;text-align:center;position:relative;overflow:hidden}
+.banner:before{content:"🌐";position:absolute;left:4%;top:18%;font-size:64px;opacity:.35}
+.banner:after{content:"🎓";position:absolute;right:4%;top:18%;font-size:64px;opacity:.9}
+.banner .pill{display:inline-block;border:1px solid rgba(255,255,255,.5);padding:4px 14px;border-radius:999px;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+/* Full-width banner: stretches edge to edge so the transparent header always sits over the dark banner, never over the white page margins */
+.page .banner{width:100vw;margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;border-radius:0!important;padding-top:104px}
+/* Samples page has no banner: pull its top image up under the transparent header the same way */
+#p-samples .heroimg{width:100vw;margin-left:calc(50% - 50vw);margin-top:-34px;border-radius:0}
+.banner h1{font-size:clamp(32px,6vw,56px);margin:14px auto 8px;max-width:900px}
+.banner p{opacity:.92;max-width:760px;margin:6px auto}
+.page{display:none;max-width:1020px;margin:0 auto;padding:34px 20px 60px}
+.page.active{display:block}
+.page h2{font-size:34px;margin-bottom:6px}
+.page h3{font-size:22px;margin:28px 0 8px;color:#9ec0f2}
+.lead{font-size:17px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.topbar{gap:8px;padding:8px 12px}.topbar .brand{font-size:16px}.topbar nav{display:none}.topbar nav.open{display:flex;position:absolute;top:100%;left:0;right:0;background:#111;flex-direction:column;align-items:stretch;padding:8px 12px 12px;box-shadow:0 16px 26px rgba(0,0,0,.38);max-height:calc(100vh - 60px);overflow:auto}.topbar nav.open button{padding:10px}.burger{display:block}.banner:before,.banner:after{display:none}.more-wrap{display:block;width:100%}.more-menu{position:static;box-shadow:none;border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.06);margin:4px 0 4px 10px;min-width:0}.more-menu button{color:#dbe6f5!important}.more-menu button:hover{background:rgba(255,255,255,.12)!important;color:#fff!important}.more-menu button.active{background:#fff!important;color:#111!important}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.info div{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px}
+.info b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+ul.tick{list-style:none;padding:0} ul.tick li{padding:6px 0 6px 22px;position:relative;border-bottom:1px dashed var(--line)} ul.tick li:before{content:"■";position:absolute;left:0;color:var(--accent);font-size:11px;top:10px}
+ol.num li{margin:6px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+th{background:var(--navy);color:#fff}
+.session{border-left:4px solid var(--accent);background:var(--soft);border-radius:0 10px 10px 0;padding:16px 18px;margin:14px 0}
+.session h4{margin:0 0 4px;font-family:"Lora",serif;font-size:19px}
+.meta{font-size:13px;color:var(--muted);font-weight:600}
+.heroimg{width:100%;border-radius:14px;display:block}
+.caption{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
+/* Carousel */
+.carousel{position:relative;background:#111;border-radius:12px;overflow:hidden;margin:18px 0}
+.carousel img{width:100%;height:420px;object-fit:cover;display:none}
+.carousel img.on{display:block}
+@media(max-width:640px){.carousel img{height:280px}}
+.cbtn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:#111;font-size:22px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.cprev{left:12px}.cnext{right:12px}
+.dots{text-align:center;padding:10px;background:#111}
+.dots span{display:inline-block;width:9px;height:9px;border-radius:50%;background:#777;margin:0 4px;cursor:pointer}
+.dots span.on{background:#fff;width:12px;height:12px}
+.slide-label{position:absolute;left:0;right:0;bottom:38px;background:rgba(0,0,0,.65);color:#fff;text-align:center;padding:8px;font-size:14px}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0}
+.quick button{font:inherit;text-align:left;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;color:var(--ink)}
+.quick button:hover{border-color:var(--accent)}
+.quick b{display:block;font-family:"Lora",serif;font-size:17px;margin-bottom:4px}
+footer{background:#111;color:#bbb;text-align:center;padding:22px;font-size:13px}
+.note{background:#2a2410;border:1px solid #5a4d1f;color:#f0df9a;border-radius:10px;padding:14px 16px;font-size:14px}
+/* Scanned supervisor feedback form — white paper look on the dark page */
+.feedback-figure{margin:18px auto 8px;max-width:780px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.feedback-figure a{display:block}
+.feedback-figure img{width:100%;height:auto;display:block;border-radius:6px}
+.feedback-figure figcaption{color:#3d4654;font-size:13.5px;text-align:center;line-height:1.55;padding:12px 6px 2px;border-top:1px solid #e3e7ee;margin-top:12px}
+@media(max-width:640px){.feedback-figure{padding:9px}}
+/* Final report PDF card + rendered document pages (white paper on the dark page) */
+.pdf-card{display:flex;gap:16px;align-items:flex-start}
+.pdf-badge{flex:0 0 auto;background:#8f1d1d;color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:8px 11px;border-radius:8px;margin-top:4px}
+.pdf-meta{font-size:13.5px;color:var(--muted);margin:4px 0 12px}
+.pdf-actions{display:flex;gap:10px;flex-wrap:wrap}
+.pdf-actions a{display:inline-block;font-weight:700;font-size:14.5px;text-decoration:none;padding:10px 18px;border-radius:9px}
+.btn-fill{background:var(--accent);color:#1c1603}
+.btn-fill:hover{background:#dcbc3e}
+.btn-line{border:1px solid var(--accent);color:var(--accent)}
+.btn-line:hover{background:rgba(201,162,39,.12)}
+@media(max-width:640px){.pdf-card{flex-direction:column;gap:8px}}
+.docpage-figure{margin:18px auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 10px 28px rgba(0,0,0,.35);max-width:820px}
+.docpage-figure img{width:100%;height:auto;display:block;border-radius:4px}
+.docpage-figure figcaption{color:#3d4654;font-size:13px;text-align:center;padding:10px 4px 0;border-top:1px solid #e3e7ee;margin-top:10px}
+@media(max-width:640px){.docpage-figure{padding:8px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <a class="brand" href="#" data-go="home">My e-portfolio</a>
+  <nav id="mainnav">
+    <button data-go="home" class="active">Home</button>
+    <button data-go="about">About</button>
+    <button data-go="placements">Internship Placements ▾</button>
+    <button data-go="objectives">Internship Objectives</button>
+    <button data-go="logbook">Internship Logbook</button>
+    <button data-go="journal">Reflective Journal ▾</button>
+    <button data-go="sessions">Internship Sessions</button>
+    <button data-go="evaluation">Supervisor Evaluation</button>
+    <div class="more-wrap">
+      <button type="button" id="moreBtn" aria-haspopup="true" aria-expanded="false">More ▾</button>
+      <div class="more-menu" id="moreMenu" role="menu">
+        <button data-go="samples" role="menuitem">Samples of Work &amp; Evidence</button>
+        <button data-go="report" role="menuitem">Final Internship Report</button>
+      </div>
+    </div>
+  </nav>
+  <div class="search-wrap">
+    <button type="button" class="search-btn" id="searchBtn" aria-label="Search" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"></circle><line x1="16" y1="16" x2="21.5" y2="21.5"></line></svg></button>
+    <div class="search-panel" id="searchPanel">
+      <input type="search" id="searchInput" placeholder="Search pages…" autocomplete="off" aria-label="Search this portfolio">
+      <div class="search-results" id="searchResults"><div class="search-hint">Type to search all pages — e.g. “logbook”, “tenses”, “evaluation”.</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- HOME -->
+<section class="page active" id="p-home">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px">
+    <span class="pill">Professional Learning Journey · 2026</span>
+    <h1>Teaching Internship</h1>
+    <p>Portfolio — English Language Teaching (ELT) &nbsp;•&nbsp; Learn • Teach • Inspire</p>
+    <p><i>“Education is the key to a brighter future.”</i></p>
+  </div>
+  <img class="heroimg" src="assets/img-01.jpg" alt="Teacher explaining English tenses at the whiteboard in a classroom during the teaching internship">
+  <p class="caption">Teaching English tenses at the whiteboard during the internship</p>
+  <h2 style="margin-top:26px">Welcome to My Teaching Journey!</h2>
+  <h3 style="margin-top:10px">Murad Ali</h3>
+  <p class="lead"><b>BS English Language Teaching (ELT), Batch 2K24 — 6th Semester, University of Sindh, Jamshoro</b></p>
+  <div class="info">
+    <div><b>Internship Institution</b>Government Boys Higher Secondary School, Qasimabad, Hyderabad</div>
+    <div><b>Internship Period</b>14 September – 30 October 2026</div>
+    <div><b>Internship Supervisor</b>Sir Noor Akhtar Memon</div>
+    <div><b>Programme &amp; Batch</b>BS English Language Teaching, Batch 2K24</div>
+  </div>
+  <h3>Welcome to My e-portfolio</h3>
+  <p>Hello, I am Murad Ali, a BS English Language Teaching (ELT) student at the University of Sindh, Jamshoro. This e-portfolio documents my internship journey at Government Boys Higher Secondary School, Qasimabad, Hyderabad.</p>
+  <p>Here, you will find my internship placements, objectives, logbook, reflective journal, supervisor evaluation, samples of work, and final internship report — all reflecting my learning, teaching practice, and professional growth as a future English language teacher.</p>
+  <div class="quick">
+    <button data-go="about"><b>About →</b>About me, education &amp; skills</button>
+    <button data-go="placements"><b>Placements →</b>School, duration &amp; classroom context</button>
+    <button data-go="logbook"><b>Logbook →</b>All 10 sessions, 60 hours</button>
+    <button data-go="samples"><b>Samples →</b>Classroom photo evidence</button>
+    <button data-go="evaluation"><b>Evaluation →</b>Supervisor marks &amp; feedback</button>
+    <button data-go="report"><b>Final Report →</b>Complete internship report</button>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="page" id="p-about">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Internship Profile</h1></div>
+  <h3 style="margin-top:0">Personal Introduction</h3>
+  <p>My name is Murad Ali, and I am currently a sixth-semester student pursuing a Bachelor of Science in English Language Teaching (BS ELT) at the University of Sindh. I have a strong academic interest in English language teaching, classroom management, and modern pedagogical approaches. With one year of teaching experience, I have developed a keen understanding of students' learning needs, effective communication, and classroom engagement.</p>
+  <p>As part of my academic and professional development, I completed my teaching internship at Government Boys Higher Secondary School, Qasimabad, Hyderabad, where I gained practical teaching experience, strengthened my instructional abilities, and explored the realities of the educational environment. This experience further enhanced my passion for teaching and motivated me to pursue a career in the field of education.</p>
+  <h3>Educational Background</h3>
+  <div class="info">
+    <div><b>Degree</b>Bachelor of Science in English Language Teaching (BS ELT)</div>
+    <div><b>Current Semester</b>Sixth Semester</div>
+    <div><b>Institution</b>University of Sindh</div>
+    <div><b>Academic Status</b>Currently Enrolled</div>
+  </div>
+  <h3>Internship Details</h3>
+  <div class="info">
+    <div><b>Organization</b>Government Boys Higher Secondary School</div>
+    <div><b>Location</b>Qasimabad, Hyderabad</div>
+    <div><b>Internship Field</b>English Language Teaching</div>
+    <div><b>Duration</b>80 Hours</div>
+    <div><b>Purpose</b>Practical teaching experience and professional development</div>
+  </div>
+  <h3>Professional Experience</h3>
+  <p><b>Teaching Experience: One Year</b></p>
+  <ul class="tick">
+    <li>Experience in teaching and supporting students' learning.</li>
+    <li>Developing effective communication and instructional strategies.</li>
+    <li>Assisting students in understanding English language concepts.</li>
+    <li>Promoting student participation and classroom interaction.</li>
+  </ul>
+  <h3>Career Objective</h3>
+  <p>To build a successful career as a professional English language teacher by applying my academic knowledge, practical teaching experience, and pedagogical skills. I aim to create an inclusive, interactive, and student-centered learning environment that encourages critical thinking, communication, creativity, and academic growth. My long-term objective is to contribute positively to the education sector through innovative teaching methodologies, continuous professional development, and a commitment to educational excellence.</p>
+  <h3>Professional Skills</h3>
+  <ol class="num">
+    <li><b>Communication Skills:</b> Effective verbal and written communication.</li>
+    <li><b>Classroom Management:</b> Maintaining a productive, disciplined, and supportive learning environment.</li>
+    <li><b>Lesson Planning:</b> Designing structured and goal-oriented lesson plans.</li>
+    <li><b>Teaching Methodologies:</b> Understanding student-centered and interactive teaching approaches.</li>
+    <li><b>Student Engagement:</b> Encouraging active participation and collaborative learning.</li>
+    <li><b>Time Management:</b> Organizing classroom activities and completing tasks efficiently.</li>
+    <li><b>Presentation Skills:</b> Delivering lessons and explaining concepts confidently.</li>
+    <li><b>Problem-Solving:</b> Addressing classroom challenges through effective strategies.</li>
+    <li><b>Teamwork and Collaboration:</b> Working cooperatively with teachers, students, and educational staff.</li>
+    <li><b>Adaptability:</b> Adjusting teaching strategies according to students' abilities and learning needs.</li>
+  </ol>
+  <h3>Professional Interests</h3>
+  <ul class="tick">
+    <li>English Language Teaching and Learning</li>
+    <li>Modern Teaching Methodologies</li>
+    <li>Educational Technology (ICT)</li>
+    <li>Curriculum and Lesson Planning</li>
+    <li>Student-Centered Learning</li>
+    <li>Classroom Assessment and Evaluation</li>
+    <li>Continuous Professional Development</li>
+  </ul>
+  <h3>Certificate of Achievement — Diploma in English Language</h3>
+  <p>The Certificate of Achievement issued by the Cambridge Institute of Sure Success (CISS), Qasimabad, confirming that Murad Ali Bhambhro successfully completed the ten-month Diploma in English Language (DEL) course, securing 6th position, dated 5 November 2024.</p>
+  <div class="card pdf-card">
+    <span class="pdf-badge">PDF</span>
+    <div>
+      <h3 style="margin:0 0 4px">Certificate of Achievement — PDF Document</h3>
+      <p style="margin:0">The scanned <b>Certificate of Achievement</b> from the Cambridge Institute of Sure Success (CISS): <b>Diploma in English Language (DEL)</b> — a ten-month course completed by Murad Ali Bhambhro, securing 6th position (Ref: DEL/2024/634, dated 05/11/2024). The certificate is shown below; open or download the original PDF file for printing.</p>
+      <p class="pdf-meta">File: Certificate of Achievement — Diploma in English Language (scanned PDF) · 1 page · A4 landscape</p>
+      <div class="pdf-actions">
+        <a class="btn-fill" href="assets/Certificate_of_Achievement_DEL_CISS.pdf" target="_blank" rel="noopener">Open PDF</a>
+        <a class="btn-line" href="assets/Certificate_of_Achievement_DEL_CISS.pdf" download="Certificate_of_Achievement_DEL_CISS.pdf">Download PDF</a>
+      </div>
+    </div>
+  </div>
+  <figure class="docpage-figure" style="max-width:880px">
+    <img src="assets/img-02.jpg" alt="Certificate of Achievement PDF — Cambridge Institute of Sure Success (CISS): Murad Ali Bhambhro has successfully completed a ten months' course of Diploma in English Language (DEL), securing 6th position, Ref DEL/2024/634, dated 05/11/2024" width="2200" height="1678" loading="lazy">
+    <figcaption>Certificate of Achievement — Murad Ali Bhambhro · Diploma in English Language (DEL) · 6th position · Cambridge Institute of Sure Success (CISS) · 5 November 2024</figcaption>
+  </figure>
+</section>
+
+<!-- PLACEMENTS -->
+<section class="page" id="p-placements">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Internship Placements</h1></div>
+  <h3 style="margin-top:0">Placement Introduction</h3>
+  <p>My internship placement took place at Spark School, Jinnah Campus, Qasimabad, Hyderabad, from 22nd October 2025 to 18th December 2025. As part of my BS English Language Teaching (ELT) programme at the University of Sindh, Jamshoro, I was assigned to teach English to students of Classes 9 and 10 on Thursdays.</p>
+  <p>This placement provided me with a valuable opportunity to apply my university learning in a real classroom setting, develop my teaching skills, and understand the responsibilities of an English language teacher.</p>
+  <h3>Placement Information</h3>
+  <table>
+    <tr><th>School Name</th><td>Spark School</td></tr>
+    <tr><th>Campus</th><td>Jinnah Campus</td></tr>
+    <tr><th>Address</th><td>Qasimabad, Hyderabad</td></tr>
+    <tr><th>Internship Duration</th><td>22 October 2025 to 18 December 2025</td></tr>
+    <tr><th>Internship Days</th><td>Thursday, Friday</td></tr>
+    <tr><th>Subject Taught</th><td>English Language</td></tr>
+    <tr><th>Classes Taught</th><td>Classes 9 and 10</td></tr>
+    <tr><th>Total Hours Completed</th><td>60 hours</td></tr>
+    <tr><th>University Supervisor</th><td>Prof. Sumaira Bhambhro</td></tr>
+    <tr><th>School Supervisor</th><td>Sir Shoaib Brohi</td></tr>
+    <tr><th>Timings</th><td>09:00 AM – 12:00 PM (morning classes)</td></tr>
+  </table>
+  <h3>Placement Details</h3>
+  <p>Throughout my internship, I followed a structured teaching routine that included observing experienced teachers, assisting in classroom activities, and delivering lessons independently. In the beginning, I observed how teachers managed the classroom, introduced new topics, and engaged students in learning. Gradually, I began to take charge of lessons, prepare lesson plans, and design activities that encouraged student participation.</p>
+  <p>My responsibilities included preparing lesson plans, teaching grammar and reading comprehension, conducting speaking and writing activities, and assessing students' progress. I also maintained a logbook of all sessions, recording the activities, learning outcomes, and reflections for each day.</p>
+  <h3>School Overview</h3>
+  <p>Spark School is a well-organized educational institution that provides a supportive learning environment for its students. The school follows a structured academic programme and encourages both teachers and students to participate actively in the learning process. During my internship, I found the school's environment welcoming and professional.</p>
+  <p>The teaching staff at Spark School were supportive and helpful. They guided me in lesson planning, classroom management, and interacting with students. The school's focus on discipline, respect, and quality education helped me grow as a teacher and understand the values of professional teaching.</p>
+  <h3>Classroom Context</h3>
+  <p>I taught students of Classes 9 and 10, who were at different levels of English proficiency. Most students were eager to learn but needed support in grammar, vocabulary, and spoken English. To address these needs, I used a variety of teaching methods, including group discussions, role-play activities, worksheets, and interactive exercises.</p>
+  <p>I tried to create a positive classroom environment where students felt comfortable asking questions and expressing their ideas. I also encouraged them to use English in daily communication, which helped build their confidence and improve their speaking skills.</p>
+  <h3>Key Learning from the Placement</h3>
+  <p>This placement helped me develop several important teaching skills. I learned how to plan lessons effectively, manage classroom time, and handle different learning needs. I also improved my communication skills and gained confidence in speaking in front of a class.</p>
+  <p>One of the most valuable lessons I learned was the importance of patience and flexibility in teaching. Every class is different, and a teacher must adapt to the needs of the students. This experience taught me to be more reflective and to continuously improve my teaching methods.</p>
+  <h3>Conclusion</h3>
+  <p>My internship at Spark School was a meaningful and rewarding experience. It allowed me to connect theory with practice and develop a deeper understanding of the teaching profession. I am grateful to the school administration, my supervisor, and the students for their support and cooperation throughout my internship.</p>
+  <p>This experience has strengthened my commitment to becoming a professional English language teacher and has prepared me for the challenges and responsibilities of the profession.</p>
+</section>
+
+<!-- OBJECTIVES -->
+<section class="page" id="p-objectives">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Internship Objectives</h1></div>
+  <p class="lead">The primary objective of my 80-hour teaching internship at Government Boys Higher Secondary School, Qasimabad, Hyderabad, was to bridge the gap between theoretical knowledge and practical teaching experience. This internship provided an opportunity to understand the educational environment, develop professional teaching competencies, and gain practical exposure to classroom practices.</p>
+  <h3>Specific Objectives</h3>
+  <ol class="num">
+    <li><b>Practical Teaching Experience:</b> To apply theoretical knowledge of English Language Teaching (ELT) in real classroom situations.</li>
+    <li><b>Classroom Management:</b> To develop effective classroom management strategies and maintain a disciplined, positive, and student-friendly learning environment.</li>
+    <li><b>Teaching Methodologies:</b> To understand and implement different teaching methods, instructional strategies, and learner-centred approaches.</li>
+    <li><b>Lesson Planning:</b> To develop the ability to design structured, meaningful, and objective-oriented lesson plans.</li>
+    <li><b>Communication Skills:</b> To enhance verbal communication, presentation, and interaction skills while engaging with students and teachers.</li>
+    <li><b>Student Engagement:</b> To learn how to encourage students' participation, motivation, confidence, and active involvement in classroom activities.</li>
+    <li><b>Assessment Techniques:</b> To understand different assessment strategies for evaluating students' learning progress and academic performance.</li>
+    <li><b>Professional Development:</b> To develop professional ethics, punctuality, responsibility, teamwork, and effective collaboration with teaching staff.</li>
+    <li><b>Problem-Solving Skills:</b> To identify classroom challenges and develop practical solutions to improve the teaching-learning process.</li>
+    <li><b>Reflective Teaching:</b> To evaluate personal teaching performance, identify areas for improvement, and continuously develop professional teaching skills.</li>
+  </ol>
+  <h3>Overall Objective</h3>
+  <p>The overall objective of this internship was to transform academic knowledge into practical professional competence, strengthen my identity as a prospective educator, and prepare myself to contribute effectively to the teaching and learning process in future educational institutions.</p>
+</section>
+
+<!-- LOGBOOK -->
+<section class="page" id="p-logbook">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Internship Logbook</h1></div>
+  <div class="card pdf-card">
+    <span class="pdf-badge">PDF</span>
+    <div>
+      <h3 style="margin:0 0 4px">Internship Log — PDF Document</h3>
+      <p style="margin:0">The signed handwritten <b>Internship Log</b>: 16 dated entries from 14 September 2026 to 30 October 2026, each recording the day's activities performed, the skill developed and 5 hours logged, signed by the supervisor — 80 hours in total. Both scanned pages are shown at the end of this page; open or download the original PDF file for printing.</p>
+      <p class="pdf-meta">File: Internship Logbook (scanned PDF) · 2 pages · A4</p>
+      <div class="pdf-actions">
+        <a class="btn-fill" href="assets/Internship_Logbook.pdf" target="_blank" rel="noopener">Open PDF</a>
+        <a class="btn-line" href="assets/Internship_Logbook.pdf" download="Internship_Logbook.pdf">Download PDF</a>
+      </div>
+    </div>
+  </div>
+  <p class="lead">An internship logbook is a systematic record of daily activities, responsibilities, learning experiences, and reflections completed during the internship period. It documents the intern's professional development, practical involvement, and progress towards achieving the objectives of the internship.</p>
+  <h3>Internship Logbook Details</h3>
+  <div class="info">
+    <div><b>Organization</b>Government Boys Higher Secondary School, Qasimabad, Hyderabad</div>
+    <div><b>Internship Duration</b>14 September 2026 to 30 October 2026</div>
+    <div><b>Total Internship Hours</b>80 Hours</div>
+    <div><b>Daily Working Hours</b>5 Hours</div>
+    <div><b>Department</b>Teaching / Education</div>
+    <div><b>Internship Supervisor</b>Sir Noor Akhtar</div>
+  </div>
+  <h3>Purpose of the Logbook</h3>
+  <p>The purpose of maintaining this logbook was to document my daily teaching experiences, classroom observations, assigned responsibilities, and professional learning throughout the internship. It helped me monitor my progress, reflect on my teaching practices, identify areas requiring improvement, and develop a deeper understanding of the educational environment.</p>
+  <h3>Components of the Internship Logbook</h3>
+  <ul class="tick">
+    <li><b>Date:</b> The specific date of each internship activity.</li>
+    <li><b>Daily Activities:</b> Tasks and responsibilities performed during the day.</li>
+    <li><b>Hours Completed:</b> The total time spent on internship activities.</li>
+    <li><b>Learning Outcomes:</b> Knowledge and professional skills gained.</li>
+    <li><b>Reflection of the Day:</b> Personal evaluation of daily experiences.</li>
+    <li><b>Areas for Improvement:</b> Identification of skills and practices that need further development.</li>
+  </ul>
+  <h3>Reflective Practice</h3>
+  <p>Throughout my internship, I maintained a reflective approach to learning by considering two essential questions:</p>
+  <div class="card">
+    <p style="margin:4px 0"><b>What did I learn today?</b></p>
+    <p style="margin:4px 0"><b>What can I do differently tomorrow?</b></p>
+  </div>
+  <p>These reflections helped me connect classroom experiences with pedagogical knowledge and gradually improve my professional teaching competencies.</p>
+  <div class="note"><b>Note:</b> The internship logbook serves as documentary evidence of my 80 hours of practical teaching experience and reflects my commitment to professional growth, continuous learning, and educational development.</div>
+  <h3>Internship Log — Scanned Pages</h3>
+  <p>The original signed logbook pages, scanned from the handwritten Internship Log. Each entry records the date, activities performed, skill developed and hours logged, with the supervisor's signature.</p>
+  <figure class="docpage-figure">
+    <img src="assets/img-03.jpg" alt="Internship Log PDF, page 1 — handwritten log table with 7 signed entries from 14 September 2026 to 5 October 2026: school observation, teaching methods, lesson planning, classroom management, collaborative learning, questioning techniques and learner-centred English activities, 5 hours each" width="1405" height="1989" loading="lazy">
+    <figcaption>Internship Log — Page 1 of 2 (14 September – 5 October 2026)</figcaption>
+  </figure>
+  <figure class="docpage-figure">
+    <img src="assets/img-04.jpg" alt="Internship Log PDF, page 2 — handwritten log table with 9 signed entries from 8 October 2026 to 30 October 2026: brainstorming and discussion, teaching-learning materials, technology-supported teaching, peer learning, formative assessment, differentiated instruction, problem solving, review of learning and final reflection, 5 hours each" width="1405" height="1989" loading="lazy">
+    <figcaption>Internship Log — Page 2 of 2 (8 October – 30 October 2026)</figcaption>
+  </figure>
+</section>
+
+<!-- JOURNAL -->
+<section class="page" id="p-journal">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Reflective Journal</h1></div>
+  <p class="lead">A reflective journal is an essential component of professional development that enables an intern to critically examine daily experiences, teaching practices, challenges, and learning outcomes. It provides an opportunity to evaluate personal performance, recognize strengths, identify areas for improvement, and develop a deeper understanding of the teaching-learning process.</p>
+  <p>During my 80-hour teaching internship at Government Boys Higher Secondary School, Qasimabad, Hyderabad, I maintained a reflective approach to document my experiences, classroom observations, interactions with students, and professional learning.</p>
+  <h3>Purpose of the Reflective Journal</h3>
+  <p>The major purposes of maintaining this reflective journal were:</p>
+  <ul class="tick">
+    <li><b>Self-Evaluation:</b> To critically evaluate my teaching performance and professional growth.</li>
+    <li><b>Experiential Learning:</b> To connect theoretical pedagogical knowledge with real classroom experiences.</li>
+    <li><b>Critical Thinking:</b> To analyse classroom situations, teaching challenges, and students' learning needs.</li>
+    <li><b>Professional Improvement:</b> To identify weaknesses and develop strategies for improving teaching effectiveness.</li>
+    <li><b>Classroom Understanding:</b> To understand students' behaviour, learning differences, participation, and classroom dynamics.</li>
+    <li><b>Teaching Development:</b> To strengthen lesson delivery, communication, instructional techniques, and classroom management.</li>
+    <li><b>Continuous Learning:</b> To develop a habit of reflection, self-awareness, and lifelong professional learning.</li>
+  </ul>
+  <h3>Reflective Questions</h3>
+  <p>Throughout my internship, I focused on the following reflective questions:</p>
+  <div class="card">
+    <p style="margin:4px 0"><b>What did I learn today?</b></p>
+    <p style="margin:4px 0"><b>What teaching strategies were effective?</b></p>
+    <p style="margin:4px 0"><b>What challenges did I encounter?</b></p>
+    <p style="margin:4px 0"><b>How did students respond to classroom activities?</b></p>
+    <p style="margin:4px 0"><b>What could I improve in my teaching practice tomorrow?</b></p>
+  </div>
+  <h3>Overall Reflection</h3>
+  <p>My teaching internship was a valuable learning experience that transformed my understanding of teaching from theoretical knowledge into practical professional experience. It allowed me to observe the realities of classroom instruction, understand students' educational needs, and recognize the importance of effective communication, patience, planning, and classroom management.</p>
+  <p>One of my most significant realizations was that teaching is not merely the transmission of knowledge; rather, it is a continuous process of facilitating learning, encouraging critical thinking, building confidence, and creating meaningful educational experiences. This reflective journey strengthened my professional confidence and prepared me to approach future teaching responsibilities with greater competence, responsibility, and dedication.</p>
+</section>
+
+<!-- SESSIONS -->
+<section class="page" id="p-sessions">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Internship Sessions</h1></div>
+  <h3 style="margin-top:0">Reflective Journal: Internship Sessions</h3>
+  <p>This section contains detailed reflections on each of my internship sessions at Spark School, Jinnah Campus, Qasimabad, Hyderabad. Each reflection includes a description of the session, an analysis of what happened, and reflections on the lessons learned.</p>
+  <p>The sessions are organized chronologically, covering the internship period from 22 October 2025 to 18 December 2025.</p>
+  <div id="sessions-list"></div>
+</section>
+
+<!-- EVALUATION -->
+<section class="page" id="p-evaluation">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Supervisor Evaluation</h1></div>
+  <p class="lead">The supervisor evaluated my overall internship performance, including teaching skills, classroom management, punctuality, communication, professional behaviour, and student engagement. His guidance and constructive feedback helped me improve my teaching abilities, build professional confidence, and develop practical classroom experience.</p>
+  <div class="card">
+    <p style="margin:4px 0"><b>Supervisor:</b> Sir Noor Akhtar &nbsp; <b>Signature:</b> __________ &nbsp; <b>Date:</b> __________</p>
+  </div>
+  <h3>Supervisor's Feedback Form</h3>
+  <p>Signed feedback form from my internship supervisor, recording 80 hours logged and a total of 20 marks, with the comment that the student demonstrated good overall performance, active participation, and positive learning progress.</p>
+  <figure class="feedback-figure">
+    <a href="assets/img-05.png" target="_blank" rel="noopener" aria-label="Open the full-size scanned supervisor feedback form">
+      <img src="assets/img-05.png" alt="Scanned Supervisor's Feedback form: marks table totalling 20 out of 20, handwritten comment, signature of Sir Noor Akhtar Memon, High School Teacher (HST), Government Boys Higher Secondary School, Qasimabad, Hyderabad" width="1239" height="1120" loading="lazy">
+    </a>
+    <figcaption>Supervisor's Feedback — Sir Noor Akhtar Memon, High School Teacher (HST), Government Boys Higher Secondary School, Qasimabad, Hyderabad · 80 hours logged · Total: 20 marks. Tap the form to view it full size.</figcaption>
+  </figure>
+  <h3>Internship Completion Certificate</h3>
+  <p>The Internship Completion Certificate issued by Government Boys Higher Secondary School, Qasimabad, Hyderabad, confirming that Murad Ali completed his 80-hour internship at the school with punctuality from 14 September 2026 to 30 October 2026, signed by the Principal and the Supervisor.</p>
+  <div class="card pdf-card">
+    <span class="pdf-badge">PDF</span>
+    <div>
+      <h3 style="margin:0 0 4px">Completion Certificate — PDF Document</h3>
+      <p style="margin:0">The scanned <b>Internship Completion Certificate</b> from Government Boys Higher Secondary School, Qasimabad, Hyderabad: 80 hours of internship completed from 14-Sep-2026 to 30-Oct-2026, signed by the Principal and the Supervisor. The certificate is shown below; open or download the original PDF file for printing.</p>
+      <p class="pdf-meta">File: Internship Completion Certificate (scanned PDF) · 1 page · A4 landscape</p>
+      <div class="pdf-actions">
+        <a class="btn-fill" href="assets/Internship_Completion_Certificate.pdf" target="_blank" rel="noopener">Open PDF</a>
+        <a class="btn-line" href="assets/Internship_Completion_Certificate.pdf" download="Internship_Completion_Certificate.pdf">Download PDF</a>
+      </div>
+    </div>
+  </div>
+  <figure class="docpage-figure" style="max-width:880px">
+    <img src="assets/img-06.jpg" alt="Internship Completion Certificate PDF — Government Boys Higher Secondary School, Qasimabad, Hyderabad, presented to Murad Ali: he has completed his 80 hours internship at the school with punctuality from 14-Sep-2026 to 30-Oct-2026, signed by the Principal and the Supervisor" width="2339" height="1497" loading="lazy">
+    <figcaption>Internship Completion Certificate — Murad Ali · 80 hours · 14 September – 30 October 2026 · Government Boys Higher Secondary School, Qasimabad, Hyderabad</figcaption>
+  </figure>
+</section>
+
+<!-- SAMPLES -->
+<section class="page" id="p-samples">
+  <img class="heroimg" src="assets/img-07.jpg" alt="Illustration of a teacher's desk with an open notebook, tablet and pen" style="height:300px;object-fit:cover">
+  <div style="border:3px solid var(--ink);border-radius:14px;padding:22px;text-align:center;margin:20px 0;background:var(--card)">
+    <h2 style="font-size:clamp(28px,5vw,44px)">Samples of Work &amp; Evidence</h2>
+  </div>
+  <p>This page showcases samples of my work and evidence of my teaching practice during the internship at Spark School, Jinnah Campus, Qasimabad, Hyderabad. The images below provide visual evidence of my classroom teaching, student engagement, and the learning activities I conducted.</p>
+
+  <h3>Carousel 1 — Classroom Teaching</h3>
+  <div class="carousel" data-carousel>
+    <img src="assets/img-08.jpg" alt="Teacher checking a standing student's notebook in the classroom" width="1600" height="1200">
+    <img src="assets/img-09.jpg" alt="Teacher teaching the Tenses lesson at the whiteboard, Class VI-B, 28 October 2026" width="1600" height="1200">
+    <img src="assets/img-10.jpg" alt="Teacher discussing written work with a student holding his papers" width="1600" height="1200">
+    <img src="assets/img-11.jpg" alt="Wide classroom view — two students presenting at the whiteboard with the teacher" width="720" height="1277">
+    <img src="assets/img-12.jpg" alt="Teacher writing on the whiteboard while students copy notes into their notebooks" width="720" height="1277">
+    <img src="assets/img-13.jpg" alt="Teacher addressing the seated class during a lesson" width="1277" height="720">
+    <img src="assets/img-14.jpg" alt="Teacher explaining the lesson among the seated students" width="1280" height="960">
+    <div class="slide-label"></div>
+    <button class="cbtn cprev" aria-label="Previous">‹</button>
+    <button class="cbtn cnext" aria-label="Next">›</button>
+    <div class="dots"></div>
+  </div>
+  <p class="caption">Classroom teaching during the internship: checking a student's notebook · teaching Tenses at the whiteboard · discussing written work with a student · students presenting at the board · writing on the board while students take notes · addressing the class · explaining the lesson among the students</p>
+
+  <h3>Carousel 2 — Lessons &amp; Internship Certificate</h3>
+  <div class="carousel" data-carousel>
+    <img src="assets/img-14.jpg" alt="Teacher guiding students during classwork" width="1280" height="960">
+    <img src="assets/img-15.jpg" alt="Teacher with a student at the whiteboard during the reflexive pronouns lesson" width="1277" height="720">
+    <img src="assets/img-16.jpg" alt="Teacher at the whiteboard for the English Grammar — Parts of Speech lesson" width="1200" height="1600">
+    <img src="assets/img-17.jpg" alt="Wide classroom view — teacher writing on the whiteboard, students seated with notebooks" width="1277" height="720">
+    <img src="assets/img-18.jpg" alt="Internship Completion Certificate being presented to Murad Ali at Government Boys Higher Secondary School" width="1600" height="1200">
+    <img src="assets/img-19.jpg" alt="Murad Ali receiving his Internship Completion Certificate from the school staff" width="1600" height="1200">
+    <img src="assets/img-20.jpg" alt="Certificate presentation at Government Boys Higher Secondary School, Qasimabad, Hyderabad" width="1600" height="1200">
+    <div class="slide-label"></div>
+    <button class="cbtn cprev" aria-label="Previous">‹</button>
+    <button class="cbtn cnext" aria-label="Next">›</button>
+    <div class="dots"></div>
+  </div>
+  <p class="caption">More classroom moments and the end of the internship: guiding students during classwork · reflexive pronouns activity at the whiteboard · English Grammar — Parts of Speech lesson · a wide view of the lesson in progress · the Internship Completion Certificate presented at Government Boys Higher Secondary School</p>
+</section>
+
+<!-- REPORT -->
+<section class="page" id="p-report">
+  <div class="banner" style="margin:-34px -20px 26px;border-radius:0 0 18px 18px"><h1>Final Internship Report</h1></div>
+  <div class="card pdf-card">
+    <span class="pdf-badge">PDF</span>
+    <div>
+      <h3 style="margin:0 0 4px">Final Report — PDF Document</h3>
+      <p style="margin:0">The complete designed final report: <b>Teaching Internship Final Report — 80 Hours</b>, Government Boys Higher Secondary School, Qasimabad, Hyderabad, supervised by Sir Noor Akhtar. All 4 pages are shown below; open or download the original PDF file for printing.</p>
+      <p class="pdf-meta">File: Designed_Teaching_Internship_Final_Report_80_Hours.pdf · 4 pages · A4</p>
+      <div class="pdf-actions">
+        <a class="btn-fill" href="assets/Designed_Teaching_Internship_Final_Report_80_Hours.pdf" target="_blank" rel="noopener">Open PDF</a>
+        <a class="btn-line" href="assets/Designed_Teaching_Internship_Final_Report_80_Hours.pdf" download="Designed_Teaching_Internship_Final_Report_80_Hours.pdf">Download PDF</a>
+      </div>
+    </div>
+  </div>
+  <figure class="docpage-figure">
+    <img src="assets/img-21.jpg" alt="Final report PDF, page 1 — cover: Teaching Internship Final Report, 80 Hours Teaching Report, Government Boys Higher Secondary School, Qasimabad; Internship Supervisor Sir Noor Akhtar" width="1241" height="1754" loading="lazy">
+    <figcaption>Final Report — Page 1 of 4 (cover)</figcaption>
+  </figure>
+  <figure class="docpage-figure">
+    <img src="assets/img-22.jpg" alt="Final report PDF, page 2 — 1. Introduction, 2. Objectives of the Internship, 3. School Environment and Observation" width="1241" height="1754" loading="lazy">
+    <figcaption>Final Report — Page 2 of 4</figcaption>
+  </figure>
+  <figure class="docpage-figure">
+    <img src="assets/img-23.jpg" alt="Final report PDF, page 3 — 4. Activities Performed During the 80 Hours, 5. Challenges Faced During the Internship" width="1241" height="1754" loading="lazy">
+    <figcaption>Final Report — Page 3 of 4</figcaption>
+  </figure>
+  <figure class="docpage-figure">
+    <img src="assets/img-24.jpg" alt="Final report PDF, page 4 — 6. Benefits and Learning Outcomes, 7. Personal Reflection, 8. Conclusion, with signature lines" width="1241" height="1754" loading="lazy">
+    <figcaption>Final Report — Page 4 of 4</figcaption>
+  </figure>
+  <div class="card">
+    <p style="margin:4px 0"><b>Intern:</b> Faiz M</p>
+    <p style="margin:4px 0"><b>Programme:</b> BS English Language Teaching (ELT)</p>
+    <p style="margin:4px 0"><b>University:</b> University of Sindh, Jamshoro</p>
+    <p style="margin:4px 0"><b>Internship School:</b> Spark School, Jinnah Campus, Qasimabad, Hyderabad</p>
+    <p style="margin:4px 0"><b>Internship Duration:</b> 22 October 2025 to 18 December 2025</p>
+    <p style="margin:4px 0"><b>Total Hours:</b> 60 hours</p>
+  </div>
+  <h3>1. Introduction</h3>
+  <p>This report presents a comprehensive account of my internship experience at Spark School, Jinnah Campus, Qasimabad, Hyderabad, from 22 October 2025 to 18 December 2025. As a sixth-semester student of BS English Language Teaching (ELT) at the University of Sindh, Jamshoro, I completed this internship as part of my academic programme to gain practical teaching experience and develop my professional skills.</p>
+  <p>The internship provided me with an opportunity to apply the theoretical knowledge I gained during my university studies in a real classroom setting. I taught English to students of Classes 9 and 10, focusing on reading, writing, grammar, speaking, and listening skills. This report documents my objectives, activities, reflections, and the lessons I learned during the internship.</p>
+  <h3>2. Objectives of the Internship</h3>
+  <ol class="num"><li>Observe experienced teachers to understand classroom management, lesson delivery, and student engagement strategies.</li><li>Apply theoretical knowledge of English Language Teaching (ELT) in real classroom settings.</li><li>Design and deliver effective lesson plans for Classes 9 and 10.</li><li>Communicate effectively with students, teachers, and staff in English.</li><li>Develop skills in classroom management and time management.</li><li>Create a supportive and interactive learning environment that encourages student participation.</li><li>Understand the needs, abilities, and learning styles of students from diverse backgrounds.</li><li>Manage classroom behaviour and maintain discipline in a positive and respectful manner.</li><li>Reflect on teaching experiences and identify areas for improvement.</li><li>Complete the required internship hours and maintain an accurate logbook of activities.</li><li>Build confidence as a teacher and develop a professional attitude towards teaching.</li></ol>
+  <h3>3. Description of the Internship Placement</h3>
+  <p>My internship took place at Spark School, Jinnah Campus, Qasimabad, Hyderabad, from 22 October 2025 to 18 December 2025. I taught English to students of Classes 9 and 10 on Thursdays, completing a total of 60 hours over the internship period.</p>
+  <p>The school provided a supportive and professional learning environment, with well-organized classrooms and helpful teaching staff. I was assigned to teach English language skills, including reading comprehension, grammar, writing, speaking, and listening. My responsibilities included preparing lesson plans, delivering lessons, conducting activities, and assessing student progress.</p>
+  <p>Throughout the internship, I followed a structured routine that included observing experienced teachers, assisting in classroom activities, and gradually taking charge of lessons independently. I also maintained a detailed logbook of all sessions, recording the activities, learning outcomes, and reflections for each day.</p>
+  <h3>4. Activities Performed</h3>
+  <ul class="tick"><li><b>Lesson Planning:</b> Preparing detailed lesson plans for each session, including objectives, activities, and assessment methods.</li><li><b>Teaching Grammar:</b> Delivering lessons on tenses, active and passive voice, and other grammar topics.</li><li><b>Reading Comprehension:</b> Teaching reading strategies and facilitating group discussions on reading passages.</li><li><b>Writing Skills:</b> Guiding students through paragraph and essay writing, providing feedback on their written work.</li><li><b>Speaking Skills:</b> Organizing role-play activities, dialogue practice, presentations, and public speaking exercises.</li><li><b>Listening Skills:</b> Conducting listening exercises and teaching pronunciation rules.</li><li><b>Classroom Management:</b> Managing classroom behaviour, maintaining discipline, and creating a positive learning environment.</li><li><b>Assessment:</b> Assessing student progress through exercises, assignments, and informal observations.</li><li><b>Reflective Practice:</b> Maintaining a reflective journal and logbook to document my teaching experiences and professional growth.</li></ul>
+  <h3>5. Learning Outcomes</h3>
+  <ol class="num"><li>Gained practical experience in teaching English to secondary school students.</li><li>Improved my lesson planning, classroom management, and assessment skills.</li><li>Developed confidence in delivering lessons and interacting with students.</li><li>Enhanced my understanding of student needs and learning styles.</li><li>Learned to adapt teaching methods to different classroom situations.</li><li>Strengthened my communication and interpersonal skills.</li><li>Developed a reflective approach to teaching and continuous professional growth.</li><li>Gained insight into the daily responsibilities of a professional teacher.</li></ol>
+  <h3>6. Challenges and Solutions</h3>
+  <ul class="tick"><li><b>Classroom Management:</b> Some students were reluctant to participate in classroom activities. To address this, I used interactive teaching methods, group activities, and positive reinforcement.</li><li><b>Different Learning Needs:</b> Students had different levels of English proficiency. I adapted my teaching methods and provided individual support to students who needed extra help.</li><li><b>Time Management:</b> Managing classroom time effectively was challenging, especially when activities took longer than expected. I learned to plan lessons with flexible time allocations and prioritize key activities.</li><li><b>Adapting to Unexpected Situations:</b> Sometimes, lessons did not go as planned due to unexpected events. I learned to be flexible and adapt my teaching approach to the situation.</li></ul>
+  <h3>7. Reflections on the Internship</h3>
+  <p>My internship at Spark School was a valuable learning experience that helped me grow both personally and professionally. I learned the importance of patience, flexibility, and reflective practice in teaching. I also developed a deeper understanding of the challenges and rewards of the teaching profession.</p>
+  <p>One of the most important lessons I learned was that teaching is not just about delivering content but about inspiring students to learn and grow. I learned to create a supportive learning environment where students feel comfortable asking questions and expressing their ideas. I also learned the value of building positive relationships with students and colleagues.</p>
+  <p>The internship also helped me develop my confidence as a teacher. In the beginning, I was nervous about speaking in front of a class, but with practice and support from my supervisor and colleagues, I gained confidence in my teaching abilities.</p>
+  <h3>8. Supervisor Evaluation Summary</h3>
+  <p>My supervisor evaluated my performance based on criteria including attendance and punctuality, professional conduct, communication skills, teamwork, quality of assigned work, initiative, responsibility, adaptability, and overall performance. The evaluation provided valuable feedback on my strengths and areas for improvement, encouraging me to continue developing my teaching skills.</p>
+  <h3>9. Conclusion</h3>
+  <p>My internship at Spark School was a meaningful and rewarding experience that provided me with practical teaching experience and professional growth. It allowed me to connect theory with practice and develop a deeper understanding of the teaching profession.</p>
+  <p>I am grateful to the school administration, my supervisor, and the students for their support and cooperation throughout my internship. This experience has strengthened my commitment to becoming a professional English language teacher and has prepared me for the challenges and responsibilities of the profession.</p>
+  <p>I look forward to applying the skills and knowledge I gained during this internship in my future teaching career and continuing to grow as a reflective and effective English language teacher.</p>
+</section>
+
+<footer>My e-portfolio · Murad Ali — BS English Language Teaching (ELT), University of Sindh, Jamshoro · Internship at Government Boys Higher Secondary School, Qasimabad, Hyderabad · Page updated 2026</footer>
+
+<script>
+/* Header: transparent at the top; dark background appears once the page is scrolled down a little */
+(function(){
+ var bar=document.querySelector('.topbar');
+ if(!bar) return;
+ function onScroll(){ bar.classList.toggle('scrolled', window.scrollY>10); }
+ window.addEventListener('scroll',onScroll,{passive:true});
+ onScroll();
+})();
+/* Logbook page now presents the supplied overview, details, components and reflective practice — no session list is rendered there. */
+
+var sessions=[
+["Session 1 — Orientation and Introduction","October 22, 2025","9 & 10","On my first day at Spark School, I was introduced to the school environment, met the administration and teaching staff, and observed classroom activities. I was nervous but excited to begin my internship.","This session helped me understand the school's culture and teaching practices. I realized the importance of building positive relationships with students and staff. I also learned that observation is a valuable tool for understanding classroom dynamics and teaching methods."],
+["Session 2 — Reading Comprehension","October 24, 2025","9","I taught a lesson on reading comprehension, focusing on strategies for understanding a text and building vocabulary. I used group discussions to encourage student participation.","I learned that students engage more when they are actively involved in the learning process. Group discussions helped students share their ideas and learn from each other. I also realized the importance of providing clear instructions and checking for understanding."],
+["Session 3 — Grammar: Tenses","October 29, 2025","10","I taught a lesson on tenses, explaining the rules of present, past, and future tenses. I used examples and exercises to help students understand the concepts.","Teaching grammar can be challenging, especially when students have different levels of understanding. I learned to use simple language and relatable examples to make grammar more accessible. I also realized the importance of patience and providing individual support to students who need extra help."],
+["Session 4 — Writing Skills: Paragraph Writing","October 31, 2025","9","I taught paragraph writing, focusing on structure, coherence, and clarity. I guided students through writing exercises and provided feedback on their work.","I learned that writing is a skill that requires practice and feedback. Students improved when they received constructive feedback and had opportunities to revise their work. I also realized the importance of modeling good writing and providing clear examples."],
+["Session 5 — Speaking Skills: Role Play","November 5, 2025","10","I organized role-play activities to help students practice speaking English. Students worked in pairs and groups to perform dialogues and scenarios.","Role-play activities were effective in building students' confidence in speaking English. I learned that creating a safe and supportive environment encourages students to take risks and practice their language skills. I also realized the importance of providing opportunities for students to use English in meaningful contexts."],
+["Session 6 — Listening Skills and Pronunciation","October 22, 2025","10","I conducted listening exercises and taught pronunciation rules. I provided feedback on students' pronunciation and encouraged them to practice speaking clearly.","Listening and pronunciation are essential skills for effective communication. I learned that students need regular practice and feedback to improve their pronunciation. I also realized the importance of using clear and accurate pronunciation as a model for students."],
+["Session 7","November 12, 2025","9","In this session, reflect on [topic] and discuss [key activities, challenges, and outcomes].","Write about your experiences, challenges, and what you learned from this session."],
+["Session 8","November 19, 2025","10","In this session, reflect on [topic] and discuss [key activities, challenges, and outcomes].","Write about your experiences, challenges, and what you learned from this session."],
+["Session 9","November 26, 2025","9","In this session, reflect on [topic] and discuss [key activities, challenges, and outcomes].","Write about your experiences, challenges, and what you learned from this session."],
+["Session 10","December 3, 2025","10","In this session, reflect on [topic] and discuss [key activities, challenges, and outcomes].","Write about your experiences, challenges, and what you learned from this session."]
+];
+document.getElementById('sessions-list').innerHTML=sessions.map(function(s){
+ var ph=s[0].indexOf('—')===-1?' <span class="meta">(placeholder content, as on the original page)</span>':'';
+ return '<div class="session"><h4>'+s[0]+ph+'</h4><p class="meta">Date: '+s[1]+' · Class: '+s[2]+'</p><p><b>Description:</b> '+s[3]+'</p><p><b>Reflection:</b> '+s[4]+'</p></div>';
+}).join('');
+
+/* Page navigation */
+function go(id){
+ document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+ var el=document.getElementById('p-'+id); if(el) el.classList.add('active');
+ document.querySelectorAll('[data-go]').forEach(function(b){ if(b.tagName==='BUTTON'&&b.closest('nav')) b.classList.toggle('active', b.getAttribute('data-go')===id); });
+ var moreBtn=document.getElementById('moreBtn');
+ if(moreBtn){ moreBtn.classList.toggle('more-active', id==='samples'||id==='report'); }
+ var moreMenu=document.getElementById('moreMenu');
+ if(moreMenu){ moreMenu.classList.remove('open'); }
+ if(moreBtn){ moreBtn.setAttribute('aria-expanded','false'); }
+ document.getElementById('mainnav').classList.remove('open');
+ window.scrollTo({top:0,behavior:'smooth'});
+ document.title = id==='home' ? 'My e-portfolio' : 'My e-portfolio - '+el.querySelector('h1,h2').textContent.trim();
+}
+document.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click',function(e){e.preventDefault();go(b.getAttribute('data-go'));}); });
+document.getElementById('burger').addEventListener('click',function(){document.getElementById('mainnav').classList.toggle('open');});
+(function(){
+ var moreBtn=document.getElementById('moreBtn');
+ var moreMenu=document.getElementById('moreMenu');
+ if(!moreBtn||!moreMenu) return;
+ var moreWrap=moreBtn.closest('.more-wrap');
+ function hoverCapable(){ return window.matchMedia('(hover: hover) and (min-width: 761px)').matches; }
+ moreBtn.addEventListener('click',function(e){
+   e.stopPropagation();
+   var open=moreMenu.classList.toggle('open');
+   moreBtn.setAttribute('aria-expanded', open?'true':'false');
+ });
+ if(moreWrap){
+   moreWrap.addEventListener('mouseenter',function(){
+     if(!hoverCapable()) return;
+     moreWrap.classList.remove('no-hover');
+     moreMenu.classList.add('open');
+     moreBtn.setAttribute('aria-expanded','true');
+   });
+   moreWrap.addEventListener('mouseleave',function(){
+     moreWrap.classList.remove('no-hover');
+     if(!hoverCapable()) return;
+     moreMenu.classList.remove('open');
+     moreBtn.setAttribute('aria-expanded','false');
+   });
+   moreMenu.querySelectorAll('button').forEach(function(b){
+     b.addEventListener('click',function(){ moreWrap.classList.add('no-hover'); });
+   });
+ }
+ document.addEventListener('click',function(e){
+   if(!e.target.closest('.more-wrap')){
+     moreMenu.classList.remove('open');
+     moreBtn.setAttribute('aria-expanded','false');
+   }
+ });
+ document.addEventListener('keydown',function(e){
+   if(e.key==='Escape'){ moreMenu.classList.remove('open'); moreBtn.setAttribute('aria-expanded','false'); }
+ });
+})();
+
+/* Search — sits right after More in the header */
+(function(){
+ var btn=document.getElementById('searchBtn'), panel=document.getElementById('searchPanel'),
+     input=document.getElementById('searchInput'), results=document.getElementById('searchResults');
+ if(!btn||!panel||!input||!results) return;
+ var HINT='<div class="search-hint">Type to search all pages — e.g. “logbook”, “tenses”, “evaluation”.</div>';
+ var titles={};
+ document.querySelectorAll('nav [data-go], .more-menu [data-go]').forEach(function(b){
+   titles[b.getAttribute('data-go')]=b.textContent.replace('▾','').trim();
+ });
+ var pages=[];
+ document.querySelectorAll('.page').forEach(function(sec){
+   var id=sec.id.replace('p-','');
+   pages.push({id:id, title:titles[id]||id, text:(sec.textContent||'').replace(/\s+/g,' ').trim()});
+ });
+ function closePanel(){ panel.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+ function openPanel(){ panel.classList.add('open'); btn.setAttribute('aria-expanded','true'); setTimeout(function(){ input.focus(); },30); }
+ btn.addEventListener('click',function(e){ e.stopPropagation(); panel.classList.contains('open')?closePanel():openPanel(); });
+ panel.addEventListener('click',function(e){ e.stopPropagation(); });
+ document.addEventListener('click',function(e){ if(!e.target.closest('.search-wrap')) closePanel(); });
+ function snippet(text,q){
+   var i=text.toLowerCase().indexOf(q); if(i<0) i=0;
+   var s=Math.max(0,i-42), e=Math.min(text.length,i+q.length+64);
+   return (s>0?'… ':'')+text.slice(s,e)+(e<text.length?' …':'');
+ }
+ function run(){
+   var q=input.value.trim().toLowerCase();
+   if(q.length<2){ results.innerHTML=HINT; return; }
+   var hits=[];
+   pages.forEach(function(p){
+     var inTitle=p.title.toLowerCase().indexOf(q)>=0;
+     var inText=p.text.toLowerCase().indexOf(q)>=0;
+     if(inTitle||inText) hits.push({p:p, inTitle:inTitle});
+   });
+   hits.sort(function(a,b){ return (b.inTitle?1:0)-(a.inTitle?1:0); });
+   if(!hits.length){ results.innerHTML='<div class="search-none">No page found for “'+input.value.trim()+'”.</div>'; return; }
+   results.innerHTML='';
+   hits.slice(0,8).forEach(function(h,idx){
+     var b=document.createElement('button'); b.type='button'; if(idx===0) b.className='sel';
+     var t=document.createElement('b'); t.textContent=h.p.title;
+     var s=document.createElement('span'); s.textContent=snippet(h.p.text,q);
+     b.appendChild(t); b.appendChild(s);
+     b.addEventListener('click',function(){ pick(h.p.id,q); });
+     results.appendChild(b);
+   });
+ }
+ function pick(id,q){
+   closePanel();
+   go(id);
+   if(q){
+     setTimeout(function(){
+       var sec=document.getElementById('p-'+id); if(!sec) return;
+       var els=sec.querySelectorAll('h2,h3,h4,p,li,td,th,.session,.card');
+       for(var i=0;i<els.length;i++){
+         var el=els[i];
+         if(el.textContent.toLowerCase().indexOf(q)>=0 && el.textContent.length<700){
+           el.scrollIntoView({block:'center',behavior:'smooth'});
+           el.classList.add('flash-hit');
+           setTimeout(function(){ el.classList.remove('flash-hit'); },1800);
+           break;
+         }
+       }
+     },420);
+   }
+ }
+ input.addEventListener('input',run);
+ input.addEventListener('keydown',function(e){
+   if(e.key==='Enter'){ var first=results.querySelector('button'); if(first) first.click(); }
+   if(e.key==='Escape'){ closePanel(); btn.focus(); }
+ });
+})();
+
+/* Carousels */
+var labels=[
+ ["Checking a student's notebook during class","Teaching Tenses at the whiteboard — 28 October 2026","Discussing written work with a student","Students presenting at the whiteboard","Writing on the whiteboard while students take notes","Addressing the class during the lesson","Explaining the lesson to the students"],
+ ["Guiding students during classwork","Reflexive pronouns lesson at the whiteboard","English Grammar — Parts of Speech on the whiteboard","Wide classroom view — lesson in progress","Receiving the Internship Completion Certificate","Internship Completion Certificate — Murad Ali","Certificate presentation at Government Boys Higher Secondary School"]
+];
+document.querySelectorAll('[data-carousel]').forEach(function(car,ci){
+ var imgs=car.querySelectorAll('img'), dots=car.querySelector('.dots'), label=car.querySelector('.slide-label'), idx=0, timer;
+ imgs.forEach(function(_,i){ var d=document.createElement('span'); d.addEventListener('click',function(){show(i);restart();}); dots.appendChild(d); });
+ function show(i){ idx=(i+imgs.length)%imgs.length; imgs.forEach(function(im,j){im.classList.toggle('on',j===idx);}); dots.querySelectorAll('span').forEach(function(d,j){d.classList.toggle('on',j===idx);}); label.textContent=(labels[ci]&&labels[ci][idx])||''; }
+ function restart(){ clearInterval(timer); timer=setInterval(function(){show(idx+1);},4000); }
+ car.querySelector('.cprev').addEventListener('click',function(){show(idx-1);restart();});
+ car.querySelector('.cnext').addEventListener('click',function(){show(idx+1);restart();});
+ show(0); restart();
+});
+</script>
+</body>
+</html>
